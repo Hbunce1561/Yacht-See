@@ -8,6 +8,13 @@ public class main {
 }
 
 class constants {
+     public static final String[] SCORE_MULTIS = {
+            "Ones",
+            "Twos",
+            "Threes",
+            "Fours",
+            "Fives",
+            "Sixes"};
     public static final String[] SCORE_CATEGORIES = {
             "Ones",
             "Twos",
@@ -56,7 +63,9 @@ class Score {
     public int getTotal() {
         return this.totalScore;
     }
-
+    public int getBonusTotal(){
+        return this.bonusPoints+this.totalScore;
+    }
     public int getBonuses() {
         return this.bonusPoints;
     }
@@ -135,7 +144,7 @@ class yacht {
                 System.out.println("----Pre-Bonus Totals:----\nYou: " + player.getTotal() + "  |  Opponent: "
                         + opponent.getTotal()
                         + "\n----Bonuses----\nYou: " + player.getBonuses() + "  |  Opponent: " + opponent.getBonuses()
-                        + "\n----Final score----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal());
+                        + "\n----Final score----\nYou: " + player.getBonusTotal() + "  |  Opponent: " + opponent.getBonusTotal());
                 break;
             }
 
@@ -158,8 +167,8 @@ class yacht {
             }
         }
         for (int i = 0; i < 5; i++) {
-                this.dice.get(i).setKeep(false);
-            }
+            this.dice.get(i).setKeep(false);
+        }
     }
 
     public void printDice() {
@@ -173,12 +182,13 @@ class yacht {
         System.out.println("\n" + border);
 
         System.out.print("Die number: |");
-        for (int i = 1; i <= dice.size(); i++) {
-            System.out.printf(" %d |", i);
+        for (int i = 0; i < this.dice.size(); i++) {
+            System.out.printf(" %d |", i+1);
         }
         System.out.println();
         System.out.println(border);
     }
+    
 
     public void keepDice() {
         boolean inputCheck = false;
@@ -193,7 +203,7 @@ class yacht {
         loadDice();
         roll();
         System.out.println("----Opponent turn----\nOpponent Roll: ");
-        printDice();
+        
         AIScore();
         printScore(opponent);
     }
@@ -276,31 +286,13 @@ class yacht {
         }
 
     }
-
     public void AIScore() {
-        int max = 0;
-        String categoryMost = "";
-        for (String categories : constants.SCORE_CATEGORIES) {
-            if (opponent.score.get(categories) == null) {
-                int score = scoringMetric(categories, opponent);
-                if (score > max) {
-                    max = score;
-                    categoryMost = categories;
-                }
-            }
-        }
-        if (max == 0) {
-            for (String categories : constants.SCORE_CATEGORIES) {
-                if (opponent.score.get(categories) == null) {
-                    opponent.addScore(categories, 0);
-                    break;
-                }
-            }
-        } else {
-            opponent.addScore(categoryMost, max);
-        }
 
+        int max = 0;
         int i = 0;
+        String categoryMost = "";
+        System.out.println();
+        printDice();
         for (String categories : constants.SCORE_CATEGORIES) {
 
             if (opponent.score.get(categories) == null) {
@@ -310,11 +302,31 @@ class yacht {
                     System.out.println();
                 }
             }
-
         }
         System.out.println();
+        for (String categories : constants.SCORE_CATEGORIES) {
+            if (opponent.score.get(categories) == null) {
+                int score = scoringMetric(categories, opponent);
+                if (score > max) {
+                    max = score;
+                    categoryMost = categories;
+                }
+                
+            }
+        }
+        
+        if (max == 0) {
+            for (String categories : constants.SCORE_CATEGORIES) {
+                if (opponent.score.get(categories) == null) {
+                    categoryMost = categories;
+                    break;
+                }
+            }
+        }
+        opponent.addScore(categoryMost, max);
         System.out.println("\n[" + categoryMost + "]\n");
-    }
+            }
+        
 
     public int scoringMetric(String s, Score pl) {
         int rollResults[] = new int[6];
