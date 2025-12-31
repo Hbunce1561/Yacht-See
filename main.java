@@ -100,17 +100,18 @@ class yacht {
                 printDice();
                 keepDice();
             } else {
-                System.out.print("\033[H\033[2J"); 
+                System.out.print("\033[H\033[2J");
                 roll();
                 printDice();
                 scoreStart();
-                System.out.print("\033[H\033[2J"); 
+                System.out.print("\033[H\033[2J");
                 printScore(player);
                 loadDice();
                 AIturn();
             }
-            if(!player.score.containsValue(null)) {
-                System.out.println("----Final score----\nYou: "+ player.getTotal()+"  |  Opponent: "+opponent.getTotal());
+            if (!player.score.containsValue(null)) {
+                System.out.println(
+                        "----Final score----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal());
                 break;
             }
 
@@ -135,11 +136,23 @@ class yacht {
     }
 
     public void printDice() {
-        for (int i = 0; i < this.dice.size(); i++) {
-            System.out.print(this.dice.get(i).getFace()+"  |  ");
-        }
-        System.out.println();
+    
+    
+    String border = "            +---+---+---+---+---+";
+    System.out.println(border);
+    System.out.print("Die value:  |");
+    for (Dice d : dice) {
+        System.out.printf(" %d |", d.getFace());
     }
+    System.out.println("\n"+border);
+
+    System.out.print("Die number: |");
+    for (int i = 1; i <= dice.size(); i++) {
+        System.out.printf(" %d |", i);
+    }
+    System.out.println();
+    System.out.println(border);
+}
 
     public void keepDice() {
         boolean inputCheck = false;
@@ -149,7 +162,8 @@ class yacht {
         }
 
     }
-    public void AIturn(){
+
+    public void AIturn() {
         loadDice();
         roll();
         System.out.println("----Opponent turn----\nOpponent Roll: ");
@@ -162,18 +176,17 @@ class yacht {
         boolean inputCheck = false;
         while (!inputCheck) {
             System.out.println("\nWhich would you like to score this as?\n");
-            int i =0;
-            for(String categories : constants.SCORE_CATEGORIES){
-                
-                if(player.score.get(categories)==null){
-                    System.out.print(categories+"  |  ");
+            int i = 0;
+            for (String categories : constants.SCORE_CATEGORIES) {
+
+                if (player.score.get(categories) == null) {
+                    System.out.print(categories + "  |  ");
                     i++;
-                    if (i%3==0) {
-                    System.out.println();
+                    if (i % 3 == 0) {
+                        System.out.println();
+                    }
                 }
-                }
-                
-                
+
             }
             System.out.println();
             inputCheck = scoreInputClean(sc.nextLine());
@@ -181,7 +194,7 @@ class yacht {
     }
 
     public void printScore(Score s) {
-        System.out.println("\nTotal: " + s.getTotal()+"\n");
+        System.out.println("\nTotal: " + s.getTotal() + "\n");
     }
 
     public boolean rollInputClean(String s) {
@@ -213,7 +226,7 @@ class yacht {
             this.remainingRolls--;
             return true;
         } catch (Exception E) {
-            System.out.println("Invalid input");
+            System.out.println("Invalid input: Please enter numbers 1-5 separated by commas, 'all', or 'none'.");
             return false;
         }
     }
@@ -222,17 +235,16 @@ class yacht {
         try {
             s = s.toLowerCase();
             for (String categories : constants.SCORE_CATEGORIES) {
-                if (s.equalsIgnoreCase(categories)&&player.score.get(categories)==null) {
+                if (s.equalsIgnoreCase(categories) && player.score.get(categories) == null) {
                     player.addScore(categories, scoringMetric(categories));
-                    System.out.println("\n["+categories+"]\n");
+                    System.out.println("\n[" + categories + "]\n");
                     return true;
-                }
-                else if(s.equalsIgnoreCase(categories)&&player.score.get(categories)!=null){
+                } else if (s.equalsIgnoreCase(categories) && player.score.get(categories) != null) {
                     System.out.println("Category has already been played, please choose a different category");
                     return false;
                 }
             }
-            
+
             System.out.println("Invalid input");
             return false;
         } catch (Exception e) {
@@ -241,36 +253,37 @@ class yacht {
         }
 
     }
-    public void AIScore(){
-        int max=0;
-        String categoryMost="";
-        for(String categories : constants.SCORE_CATEGORIES){
-            if(opponent.score.get(categories)==null){
-            int score = scoringMetric(categories);
-            if (score > max) {
-             max = score;
-             categoryMost = categories;
+
+    public void AIScore() {
+        int max = 0;
+        String categoryMost = "";
+        for (String categories : constants.SCORE_CATEGORIES) {
+            if (opponent.score.get(categories) == null) {
+                int score = scoringMetric(categories);
+                if (score > max) {
+                    max = score;
+                    categoryMost = categories;
+                }
             }
         }
-        }
-      opponent.addScore(categoryMost, max);
-      
-      int i = 0;
-      for(String categories : constants.SCORE_CATEGORIES){
-                
-                if(opponent.score.get(categories)==null){
-                    System.out.print(categories+"  |  ");
-                    i++;
-                    if (i%3==0) {
+        opponent.addScore(categoryMost, max);
+
+        int i = 0;
+        for (String categories : constants.SCORE_CATEGORIES) {
+
+            if (opponent.score.get(categories) == null) {
+                System.out.print(categories + "  |  ");
+                i++;
+                if (i % 3 == 0) {
                     System.out.println();
                 }
-                }
-                
-                
             }
-            System.out.println();
-            System.out.println("\n["+categoryMost+"]\n");
-}
+
+        }
+        System.out.println();
+        System.out.println("\n[" + categoryMost + "]\n");
+    }
+
     public int scoringMetric(String s) {
         int rollResults[] = new int[6];
         for (Dice d : this.dice) {
@@ -311,20 +324,20 @@ class yacht {
             case "Three of a Kind":
                 for (int i = 0; i < rollResults.length; i++) {
                     if (rollResults[i] == 3) {
-                    int toak=0;
-                        for(int j =0; j< rollResults.length; j++){
-                            toak+=rollResults[j];
+                        int toak = 0;
+                        for (int j = 0; j < rollResults.length; j++) {
+                            toak += rollResults[j];
                         }
                         return toak;
-                      }
+                    }
                 }
                 return 0;
             case "Four of a Kind":
                 for (int i = 0; i < rollResults.length; i++) {
                     if (rollResults[i] == 4) {
-                        int foak=0;
-                        for(int j =0; j< rollResults.length; j++){
-                            foak+=rollResults[j];
+                        int foak = 0;
+                        for (int j = 0; j < rollResults.length; j++) {
+                            foak += rollResults[j];
                         }
                         return foak;
                     }
@@ -354,13 +367,13 @@ class yacht {
                 }
                 return 0;
             case "Lg. Straight":
-                if (rollResults[0] >= 1 || rollResults[5] >= 1)
-                    for (int i = 1; i < rollResults.length - 1; i++) {
-                        if (rollResults[i] == 0) {
-                            return 0;
-                        }
+                for (int i = 0; i < 2; i++) {
+                    if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
+                            && rollResults[i + 3] >= 1 && rollResults[i + 4] >= 1) {
+                        return 40;
                     }
-                return 40;
+                }
+                return 0;
             case "Yahtzee":
                 for (int count : rollResults) {
                     if (count == 5) {
