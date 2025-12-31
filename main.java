@@ -30,6 +30,7 @@ class Score {
     private int totalScore;
     private int bonusY;
     private int bonusPoints;
+
     public Score() {
         this.score = new HashMap<>();
         this.bonusY = 0;
@@ -47,21 +48,25 @@ class Score {
             this.score.put(category, null);
         }
     }
-    public void bonusYaht(){
+
+    public void bonusYaht() {
         this.bonusY++;
     }
 
     public int getTotal() {
         return this.totalScore;
     }
-    public int getBonuses(){
+
+    public int getBonuses() {
         return this.bonusPoints;
     }
-    public void calculateBonuses(){
-        if(this.score.get("Ones")+this.score.get("Twos")+this.score.get("Threes")+this.score.get("Fours")+this.score.get("Fives")+this.score.get("Sixes")>=63){
-            this.bonusPoints+=35;
+
+    public void calculateBonuses() {
+        if (this.score.get("Ones") + this.score.get("Twos") + this.score.get("Threes") + this.score.get("Fours")
+                + this.score.get("Fives") + this.score.get("Sixes") >= 63) {
+            this.bonusPoints += 35;
         }
-        this.bonusPoints += this.bonusY*100;
+        this.bonusPoints += this.bonusY * 100;
     }
 }
 
@@ -127,9 +132,10 @@ class yacht {
             if (!player.score.containsValue(null)) {
                 player.calculateBonuses();
                 opponent.calculateBonuses();
-                System.out.println("----Pre-Bonus Totals:----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal()
-                      +  "\n----Bonuses----\nYou: " + player.getBonuses() + "  |  Opponent: " + opponent.getBonuses()
-                      +  "\n----Final score----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal());
+                System.out.println("----Pre-Bonus Totals:----\nYou: " + player.getTotal() + "  |  Opponent: "
+                        + opponent.getTotal()
+                        + "\n----Bonuses----\nYou: " + player.getBonuses() + "  |  Opponent: " + opponent.getBonuses()
+                        + "\n----Final score----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal());
                 break;
             }
 
@@ -151,26 +157,28 @@ class yacht {
                 this.dice.get(i).rollFace();
             }
         }
+        for (int i = 0; i < 5; i++) {
+                this.dice.get(i).setKeep(false);
+            }
     }
 
     public void printDice() {
-    
-    
-    String border = "            +---+---+---+---+---+";
-    System.out.println(border);
-    System.out.print("Die value:  |");
-    for (Dice d : dice) {
-        System.out.printf(" %d |", d.getFace());
-    }
-    System.out.println("\n"+border);
 
-    System.out.print("Die number: |");
-    for (int i = 1; i <= dice.size(); i++) {
-        System.out.printf(" %d |", i);
+        String border = "            +---+---+---+---+---+";
+        System.out.println(border);
+        System.out.print("Die value:  |");
+        for (Dice d : dice) {
+            System.out.printf(" %d |", d.getFace());
+        }
+        System.out.println("\n" + border);
+
+        System.out.print("Die number: |");
+        for (int i = 1; i <= dice.size(); i++) {
+            System.out.printf(" %d |", i);
+        }
+        System.out.println();
+        System.out.println(border);
     }
-    System.out.println();
-    System.out.println(border);
-}
 
     public void keepDice() {
         boolean inputCheck = false;
@@ -217,9 +225,6 @@ class yacht {
 
     public boolean rollInputClean(String s) {
         try {
-            for (int i = 0; i < 5; i++) {
-                this.dice.get(i).setKeep(false);
-            }
             s = s.toLowerCase();
             s = s.replaceAll(" ", "");
             if (s.equals("all")) {
@@ -284,7 +289,16 @@ class yacht {
                 }
             }
         }
-        opponent.addScore(categoryMost, max);
+        if (max == 0) {
+            for (String categories : constants.SCORE_CATEGORIES) {
+                if (opponent.score.get(categories) == null) {
+                    opponent.addScore(categories, 0);
+                    break;
+                }
+            }
+        } else {
+            opponent.addScore(categoryMost, max);
+        }
 
         int i = 0;
         for (String categories : constants.SCORE_CATEGORIES) {
@@ -420,12 +434,13 @@ class yacht {
         }
         return 0;
     }
-    private void bonusYCheck(int i[], Score pl){
-                for (int j =0; j < i.length; j++) {
-                    if (i[j] == 5&&pl.score.get("Yahtzee")!=null) {
-                            pl.bonusYaht();
-                    }
-                }
+
+    private void bonusYCheck(int i[], Score pl) {
+        for (int j = 0; j < i.length; j++) {
+            if (i[j] == 5 && pl.score.get("Yahtzee") != null) {
+                pl.bonusYaht();
+            }
+        }
 
     }
 
