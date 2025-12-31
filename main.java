@@ -28,15 +28,18 @@ class constants {
 class Score {
     public HashMap<String, Integer> score;
     private int totalScore;
-
+    private int bonusY;
+    private int bonusPoints;
     public Score() {
         this.score = new HashMap<>();
+        this.bonusY = 0;
+        this.bonusPoints = 0;
         loadScore();
     }
 
     public void addScore(String s, int i) {
         this.score.put(s, i);
-        totalScore += i;
+        this.totalScore += i;
     }
 
     private void loadScore() {
@@ -44,9 +47,21 @@ class Score {
             this.score.put(category, null);
         }
     }
+    public void bonusYaht(){
+        this.bonusY++;
+    }
 
     public int getTotal() {
-        return totalScore;
+        return this.totalScore;
+    }
+    public int getBonuses(){
+        return this.bonusPoints;
+    }
+    public void calculateBonuses(){
+        if(this.score.get("Ones")+this.score.get("Twos")+this.score.get("Threes")+this.score.get("Fours")+this.score.get("Fives")+this.score.get("Sixes")>=63){
+            this.bonusPoints+=35;
+        }
+        this.bonusPoints += this.bonusY*100;
     }
 }
 
@@ -110,8 +125,11 @@ class yacht {
                 AIturn();
             }
             if (!player.score.containsValue(null)) {
-                System.out.println(
-                        "----Final score----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal());
+                player.calculateBonuses();
+                opponent.calculateBonuses();
+                System.out.println("----Pre-Bonus Totals:----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal()
+                      +  "\n----Bonuses----\nYou: " + player.getBonuses() + "  |  Opponent: " + opponent.getBonuses()
+                      +  "\n----Final score----\nYou: " + player.getTotal() + "  |  Opponent: " + opponent.getTotal());
                 break;
             }
 
@@ -236,7 +254,7 @@ class yacht {
             s = s.toLowerCase();
             for (String categories : constants.SCORE_CATEGORIES) {
                 if (s.equalsIgnoreCase(categories) && player.score.get(categories) == null) {
-                    player.addScore(categories, scoringMetric(categories));
+                    player.addScore(categories, scoringMetric(categories, player));
                     System.out.println("\n[" + categories + "]\n");
                     return true;
                 } else if (s.equalsIgnoreCase(categories) && player.score.get(categories) != null) {
@@ -259,7 +277,7 @@ class yacht {
         String categoryMost = "";
         for (String categories : constants.SCORE_CATEGORIES) {
             if (opponent.score.get(categories) == null) {
-                int score = scoringMetric(categories);
+                int score = scoringMetric(categories, opponent);
                 if (score > max) {
                     max = score;
                     categoryMost = categories;
@@ -284,7 +302,7 @@ class yacht {
         System.out.println("\n[" + categoryMost + "]\n");
     }
 
-    public int scoringMetric(String s) {
+    public int scoringMetric(String s, Score pl) {
         int rollResults[] = new int[6];
         for (Dice d : this.dice) {
             switch (d.getFace()) {
@@ -310,18 +328,25 @@ class yacht {
         }
         switch (s) {
             case "Ones":
+                bonusYCheck(rollResults, pl);
                 return rollResults[0];
             case "Twos":
+                bonusYCheck(rollResults, pl);
                 return rollResults[1] * 2;
             case "Threes":
+                bonusYCheck(rollResults, pl);
                 return rollResults[2] * 3;
             case "Fours":
+                bonusYCheck(rollResults, pl);
                 return rollResults[3] * 4;
             case "Fives":
+                bonusYCheck(rollResults, pl);
                 return rollResults[4] * 5;
             case "Sixes":
+                bonusYCheck(rollResults, pl);
                 return rollResults[5] * 6;
             case "Three of a Kind":
+                bonusYCheck(rollResults, pl);
                 for (int i = 0; i < rollResults.length; i++) {
                     if (rollResults[i] == 3) {
                         int toak = 0;
@@ -333,6 +358,7 @@ class yacht {
                 }
                 return 0;
             case "Four of a Kind":
+                bonusYCheck(rollResults, pl);
                 for (int i = 0; i < rollResults.length; i++) {
                     if (rollResults[i] == 4) {
                         int foak = 0;
@@ -344,6 +370,7 @@ class yacht {
                 }
                 return 0;
             case "Full House":
+                bonusYCheck(rollResults, pl);
                 boolean pair = false;
                 boolean trips = false;
                 for (int i = 0; i < rollResults.length; i++) {
@@ -359,6 +386,7 @@ class yacht {
                 }
                 return 0;
             case "Sm. Straight":
+                bonusYCheck(rollResults, pl);
                 for (int i = 0; i < 3; i++) {
                     if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
                             && rollResults[i + 3] >= 1) {
@@ -367,6 +395,7 @@ class yacht {
                 }
                 return 0;
             case "Lg. Straight":
+                bonusYCheck(rollResults, pl);
                 for (int i = 0; i < 2; i++) {
                     if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
                             && rollResults[i + 3] >= 1 && rollResults[i + 4] >= 1) {
@@ -386,9 +415,18 @@ class yacht {
                 for (int i = 1; i < rollResults.length + 1; i++) {
                     chanceScore += rollResults[i - 1] * i;
                 }
+                bonusYCheck(rollResults, pl);
                 return chanceScore;
         }
         return 0;
+    }
+    private void bonusYCheck(int i[], Score pl){
+                for (int j =0; j < i.length; j++) {
+                    if (i[j] == 5&&pl.score.get("Yahtzee")!=null) {
+                            pl.bonusYaht();
+                    }
+                }
+
     }
 
 }
