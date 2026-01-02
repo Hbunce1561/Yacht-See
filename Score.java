@@ -5,11 +5,13 @@ public class Score{
     private int totalScore;
     private int bonusY;
     private int bonusPoints;
+    private int bonusTotalScore;
 
     public Score() {
         this.score = new EnumMap<>(SCORE_CATEGORIES.class);
         this.bonusY = 0;
         this.bonusPoints = 0;
+        this.bonusTotalScore=0;
         loadScore();
     }
 
@@ -32,8 +34,7 @@ public class Score{
         return this.totalScore;
     }
     public int getBonusTotal(){
-        this.totalScore +=this.bonusPoints;
-        return this.totalScore;
+        return this.bonusTotalScore;
     }
     public int getBonuses() {
         return this.bonusPoints;
@@ -45,6 +46,7 @@ public class Score{
             this.bonusPoints += 35;
         }
         this.bonusPoints += this.bonusY * 100;
+        this.bonusTotalScore = this.bonusPoints + this.totalScore;
     }
     public void bonusYCheck(int i []) {
         for (int j = 0; j < i.length; j++) {

@@ -1,21 +1,23 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+
 public class Yacht {
-    private ArrayList<Dice> dice;
+    protected ArrayList<Dice> dice;
     private Scanner sc;
-    private int remainingRolls;
-    private Score player;
+    protected int remainingRolls;
+    protected Score player;
 
     public Yacht() {
-        this.dice = new ArrayList<>();
-        loadDice();
+        this.dice = loadDice();
         this.remainingRolls = 2;
         sc = new Scanner(System.in);
         this.player = new Score();
     }
-    public void clearConsole(){
+
+    public void clearConsole() {
         System.out.print("\033[H\033[2J");
     }
+
     public void play() {
         while (true) {
             if (this.remainingRolls > 0) {
@@ -28,27 +30,30 @@ public class Yacht {
                 printDice();
                 scoreStart();
                 clearConsole();
-                printScore(player);
-                loadDice();
+                printScore();
+                clearKeep();
+                resetRollCount();
             }
-            if (!player.score.containsValue(null)) {
-                player.calculateBonuses();
-                System.out.println("----Pre-Bonus Totals:----\nYou: " + player.getTotal());
+            if (!this.player.score.containsValue(null)) {
+                this.player.calculateBonuses();
                 break;
             }
-/* + "  |  Opponent: "
-                        + opponent.getTotal()
-                        + "\n----Bonuses----\nYou: " + player.getBonuses() + "  |  Opponent: " + opponent.getBonuses()
-                        + "\n----Final score----\nYou: " + player.getBonusTotal() + "  |  Opponent: " + opponent.getBonusTotal()); */
         }
     }
+    public void printScoreTotal(){
+        System.out.println("----Pre-Bonus Totals:----\n"+ this.player.getTotal() +"\n----Bonuses----\n"+this.player.getBonuses()+"\n----Final score----\n"+this.player.getBonusTotal());
 
-    private void loadDice() {
-        this.dice.clear();
-        this.remainingRolls = 2;
+    }
+    public int getTotalScore(){
+        return this.player.getBonusTotal();
+    }
+
+    public ArrayList<Dice> loadDice() {
+        ArrayList<Dice> d = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            this.dice.add(new Dice());
+            d.add(new Dice());
         }
+        return d;
     }
 
     public void roll() {
@@ -58,9 +63,17 @@ public class Yacht {
                 this.dice.get(i).rollFace();
             }
         }
+
+    }
+
+    public void clearKeep() {
         for (int i = 0; i < 5; i++) {
             this.dice.get(i).setKeep(false);
         }
+    }
+
+    public void resetRollCount() {
+        this.remainingRolls = 2;
     }
 
     public void printDice() {
@@ -68,20 +81,18 @@ public class Yacht {
         String border = "            +---+---+---+---+---+";
         System.out.println(border);
         System.out.print("Die value:  |");
-        for (Dice d : dice) {
+        for (Dice d : this.dice) {
             System.out.printf(" %d |", d.getFace());
         }
         System.out.println("\n" + border);
 
         System.out.print("Die number: |");
         for (int i = 0; i < this.dice.size(); i++) {
-            System.out.printf(" %d |", i+1);
+            System.out.printf(" %d |", i + 1);
         }
         System.out.println();
         System.out.println(border);
     }
-    
-
     public void keepDice() {
         boolean inputCheck = false;
         while (!inputCheck) {
@@ -94,7 +105,7 @@ public class Yacht {
     public void scoreStart() {
         String border = " ----------------------------";
         while (true) {
-            System.out.println("\nWhich would you like to score this as?\n\n"+border+"\n");
+            System.out.println("\nWhich would you like to score this as?\n\n" + border + "\n");
             int i = 0;
             for (SCORE_CATEGORIES categories : SCORE_CATEGORIES.values()) {
                 if (this.player.score.get(categories) == null) {
@@ -106,33 +117,30 @@ public class Yacht {
                 }
 
             }
-            System.out.println("\n"+border+"\n");
+            System.out.println("\n" + border + "\n");
             String s = sc.nextLine();
             SCORE_CATEGORIES cat = convertToCategories(s);
-            if(cat == null){
+            if (cat == null) {
                 System.out.println("Invalid input");
-            }
-            else{
-               if(this.player.score.get(cat) == null){
-                this.player.addScore(cat, scoringMetric(cat));
-                break;
-               }
-               else{
-                System.out.println("This category has already been played, please choose another.");
+            } else {
+                if (this.player.score.get(cat) == null) {
+                    this.player.addScore(cat, scoringMetric(cat));
+                    break;
+                } else {
+                    System.out.println("This category has already been played, please choose another.");
 
-               }
+                }
             }
         }
-        }
-    
-
-    private SCORE_CATEGORIES convertToCategories(String s){
-        return constants.inputMap.get(s.toLowerCase());
-       
     }
 
-    public void printScore(Score s) {
-        System.out.println("\nTotal: " + s.getTotal() + "\n");
+    private SCORE_CATEGORIES convertToCategories(String s) {
+        return constants.inputMap.get(s.toLowerCase());
+
+    }
+
+    public void printScore() {
+        System.out.println("\nTotal: " + this.player.getTotal() + "\n");
     }
 
     public boolean rollInputClean(String s) {
@@ -142,16 +150,12 @@ public class Yacht {
             if (s.equals("all")) {
                 for (int i = 0; i < 5; i++) {
                     this.dice.get(i).setKeep(true);
-                    ;
                 }
                 this.remainingRolls = 0;
                 return true;
             } else if (s.equals("none")) {
-                for (int i = 0; i < 5; i++) {
-                    this.dice.get(i).setKeep(false);
-                }
+                clearKeep();
                 this.remainingRolls--;
-
                 return true;
             }
             String arr[] = s.split(",");
@@ -165,6 +169,7 @@ public class Yacht {
             return false;
         }
     }
+
     public int scoringMetric(SCORE_CATEGORIES categories) {
         int rollResults[] = new int[6];
         for (Dice d : this.dice) {
@@ -191,30 +196,30 @@ public class Yacht {
         }
         switch (categories) {
             case ONES:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 return rollResults[0];
             case TWOS:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 return rollResults[1] * 2;
             case THREES:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 return rollResults[2] * 3;
             case FOURS:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 return rollResults[3] * 4;
             case FIVES:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 return rollResults[4] * 5;
             case SIXES:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 return rollResults[5] * 6;
             case THREE_OF_A_KIND:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 for (int i = 0; i < rollResults.length; i++) {
-                    if (rollResults[i] == 3) {
+                    if (rollResults[i] >= 3) {
                         int toak = 0;
-                        for (int j = 0; j < rollResults.length; j++) {
-                            toak += rollResults[j];
+                        for (Dice d : this.dice) {
+                            toak += d.getFace();
                         }
                         return toak;
                     }
@@ -223,17 +228,17 @@ public class Yacht {
             case FOUR_OF_A_KIND:
                 this.player.bonusYCheck(rollResults);
                 for (int i = 0; i < rollResults.length; i++) {
-                    if (rollResults[i] == 4) {
+                    if (rollResults[i] >= 4) {
                         int foak = 0;
-                        for (int j = 0; j < rollResults.length; j++) {
-                            foak += rollResults[j];
+                        for (Dice d : this.dice) {
+                            foak += d.getFace();
                         }
                         return foak;
                     }
                 }
                 return 0;
             case FULL_HOUSE:
-               this.player.bonusYCheck(rollResults);
+                this.player.bonusYCheck(rollResults);
                 boolean pair = false;
                 boolean trips = false;
                 for (int i = 0; i < rollResults.length; i++) {
@@ -275,16 +280,12 @@ public class Yacht {
                 return 0;
             case CHANCE:
                 int chanceScore = 0;
-                for (int i = 1; i < rollResults.length + 1; i++) {
-                    chanceScore += rollResults[i - 1] * i;
+                for (Dice d : this.dice) {
+                    chanceScore += d.getFace();
                 }
-                this.player.bonusYCheck(rollResults);
                 return chanceScore;
         }
         return 0;
     }
 
-    
-
 }
-
