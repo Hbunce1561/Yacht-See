@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class AI extends Yacht {
     private int rollResults[];
@@ -96,8 +97,14 @@ public class AI extends Yacht {
             setAllKeeps();
             this.c = SCORE_CATEGORIES.FULL_HOUSE;
         } else if (FOAKCheck() || TOAKCheck()) {
+            if(this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null){
             selectKeeps(multCheck());
-        } else {
+            }
+            else{
+            selectKeeps(multCheckFHDONE());
+            }
+        }
+         else {
             clearKeep();
             this.remainingRolls--;
         }
@@ -123,6 +130,20 @@ public class AI extends Yacht {
                 d.add(i+1);
             }
         }
+        return d;
+
+    }
+    private ArrayList<Integer> multCheckFHDONE() {
+        int max = 0;
+        int indexOf = 0;
+        for (int i= 0; i<  rollResults.length; i++) {
+            if (rollResults[i] > max) {
+                max = rollResults[i];
+                indexOf = i;
+            }
+        }
+        ArrayList<Integer> d = new ArrayList<>();
+        d.add(indexOf);
         return d;
 
     }
@@ -229,6 +250,7 @@ public class AI extends Yacht {
 
     @Override
     public void scoreStart() {
+        if(c==null){
         if (yachtCheck() && this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
                 this.c = SCORE_CATEGORIES.YAHTZEE;
             } else if (fhCheck() && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
@@ -280,6 +302,7 @@ public class AI extends Yacht {
                 this.c = SCORE_CATEGORIES.CHANCE;
             }
         }
+    }
         this.player.addScore(this.c, scoringMetric(this.c));
         System.out.println("\n" + this.c + "\n");
     }
