@@ -158,6 +158,7 @@ public class Yacht {
                 this.remainingRolls--;
                 return true;
             }
+            clearKeep();
             String arr[] = s.split(",");
             for (int i = 0; i < arr.length; i++) {
                 this.dice.get(Integer.parseInt(arr[i]) - 1).setKeep(true);

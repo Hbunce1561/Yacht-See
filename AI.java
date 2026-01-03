@@ -119,6 +119,9 @@ public class AI extends Yacht {
                     if (this.dice.get(j).getFace() == d.get(i)) {
                         this.dice.get(j).setKeep(true);
                     }
+                    else{
+                        this.dice.get(j).setKeep(false);
+                    }
                 }
             }
         } else {

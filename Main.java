@@ -3,8 +3,10 @@ public class Main {
         Yacht player = new Yacht();
         AI ai = new AI();
         player.play();
-        player.printScoreTotal();
         ai.play();
+        System.out.println("\nYou: ");
+        player.printScoreTotal();
+        System.out.println("Computer: ");
         ai.printScoreTotal();
         if (ai.getTotalScore() > player.getTotalScore()) {
             System.out.println("You Lose!\nBetter luck next time...");

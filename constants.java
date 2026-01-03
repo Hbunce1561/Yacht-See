@@ -56,6 +56,8 @@ public class constants {
     put("sm straight", SCORE_CATEGORIES.SMALL_STRAIGHT);
     put("sm. straight", SCORE_CATEGORIES.SMALL_STRAIGHT);
     put("smst", SCORE_CATEGORIES.SMALL_STRAIGHT);
+    put("sm. st", SCORE_CATEGORIES.SMALL_STRAIGHT);
+    put("sm st", SCORE_CATEGORIES.SMALL_STRAIGHT);
     put("ss", SCORE_CATEGORIES.SMALL_STRAIGHT);
     put("sm str8", SCORE_CATEGORIES.SMALL_STRAIGHT);
     put("small str8", SCORE_CATEGORIES.SMALL_STRAIGHT);
@@ -63,6 +65,8 @@ public class constants {
     put("lg straight", SCORE_CATEGORIES.LARGE_STRAIGHT);
     put("lg. straight", SCORE_CATEGORIES.LARGE_STRAIGHT);
     put("lgst", SCORE_CATEGORIES.LARGE_STRAIGHT);
+    put("lg st", SCORE_CATEGORIES.LARGE_STRAIGHT);
+    put("lg. st", SCORE_CATEGORIES.LARGE_STRAIGHT);
     put("ls", SCORE_CATEGORIES.LARGE_STRAIGHT);
     put("lg str8", SCORE_CATEGORIES.LARGE_STRAIGHT);
     put("large str8", SCORE_CATEGORIES.LARGE_STRAIGHT);
@@ -72,6 +76,7 @@ public class constants {
     put("yachtsee", SCORE_CATEGORIES.YAHTZEE);
     put("yathzee", SCORE_CATEGORIES.YAHTZEE);
     put("yaht", SCORE_CATEGORIES.YAHTZEE);
+    put("yacht", SCORE_CATEGORIES.YAHTZEE);
     put("chance", SCORE_CATEGORIES.CHANCE);
     put("c", SCORE_CATEGORIES.CHANCE);
     put("chnce", SCORE_CATEGORIES.CHANCE);
