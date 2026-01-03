@@ -91,33 +91,38 @@ public class AI extends Yacht {
             } else if (this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
                 setAllKeeps();
                 this.c = SCORE_CATEGORIES.SMALL_STRAIGHT;
+            } else if (tinyStraightCheck() && this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null
+                    || tinyStraightCheck() && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
+                selectKeeps(tinyRunCheck());
             }
-
         } else if (fhCheck() && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
             setAllKeeps();
             this.c = SCORE_CATEGORIES.FULL_HOUSE;
         } else if (FOAKCheck() || TOAKCheck()) {
-            if(this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null){
-            selectKeeps(multCheck());
+            if (this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
+                selectKeeps(multCheck());
+            } else {
+                selectKeeps(multCheckFHDONE());
             }
-            else{
+        } else if (multCheck().size() > 0) {
             selectKeeps(multCheckFHDONE());
-            }
-        }
-         else {
-            clearKeep();
-            this.remainingRolls--;
+        } else {
+            selectKeeps(null);
         }
     }
 
-    private void selectKeeps(ArrayList<Integer> d) {
 
-        for (int i = 0; i < d.size(); i++) {
-            for (int j = 0; j < this.dice.size(); j++) {
-                if (this.dice.get(j).getFace() == d.get(i)) {
-                    this.dice.get(j).setKeep(true);
+    private void selectKeeps(ArrayList<Integer> d) {
+        if (d != null) {
+            for (int i = 0; i < d.size(); i++) {
+                for (int j = 0; j < this.dice.size(); j++) {
+                    if (this.dice.get(j).getFace() == d.get(i)) {
+                        this.dice.get(j).setKeep(true);
+                    }
                 }
             }
+        } else {
+            clearKeep();
         }
         this.remainingRolls--;
 
@@ -125,27 +130,47 @@ public class AI extends Yacht {
 
     private ArrayList<Integer> multCheck() {
         ArrayList<Integer> d = new ArrayList<>();
-        for (int i = 0; i< rollResults.length; i++) {
+        for (int i = 0; i < rollResults.length; i++) {
             if (rollResults[i] > 1) {
-                d.add(i+1);
+                d.add(i + 1);
             }
         }
         return d;
 
     }
+
     private ArrayList<Integer> multCheckFHDONE() {
         int max = 0;
         int indexOf = 0;
-        for (int i= 0; i<  rollResults.length; i++) {
+        for (int i = 0; i < rollResults.length; i++) {
             if (rollResults[i] > max) {
                 max = rollResults[i];
                 indexOf = i;
             }
         }
         ArrayList<Integer> d = new ArrayList<>();
-        d.add(indexOf);
+        d.add(indexOf+1);
         return d;
 
+    }
+
+    private ArrayList<Integer> tinyRunCheck() {
+        ArrayList<Integer> d = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            if (rollResults[i] >= 1 && rollResults[i + 1] >= 1) {
+                d.add(i + 1);
+                d.add(i + 2);
+            }
+        }
+        return d;
+
+    }
+
+    private boolean tinyStraightCheck() {
+        if (tinyRunCheck().size() >= 2) {
+            return true;
+        }
+        return false;
     }
 
     private ArrayList<Integer> runCheck() {
@@ -250,13 +275,12 @@ public class AI extends Yacht {
 
     @Override
     public void scoreStart() {
-        if(c==null){
-        if (yachtCheck() && this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
+        if (c == null) {
+            if (yachtCheck() && this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
                 this.c = SCORE_CATEGORIES.YAHTZEE;
             } else if (fhCheck() && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
                 this.c = SCORE_CATEGORIES.FULL_HOUSE;
-            }
-            else if (FOAKCheck() && this.player.score.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) == null) {
+            } else if (FOAKCheck() && this.player.score.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) == null) {
                 this.c = SCORE_CATEGORIES.FOUR_OF_A_KIND;
             } else if (TOAKCheck() && this.player.score.get(SCORE_CATEGORIES.THREE_OF_A_KIND) == null) {
                 this.c = SCORE_CATEGORIES.THREE_OF_A_KIND;
@@ -266,43 +290,41 @@ public class AI extends Yacht {
                 this.c = SCORE_CATEGORIES.FIVES;
             } else if (rollResults[3] > 3 && this.player.score.get(SCORE_CATEGORIES.FOURS) == null) {
                 this.c = SCORE_CATEGORIES.FOURS;
-            }
-            else if (sStraightCheck()&&this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
+            } else if (sStraightCheck() && this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
                 this.c = SCORE_CATEGORIES.SMALL_STRAIGHT;
-            } else if (lStraightCheck()&&this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
+            } else if (lStraightCheck() && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
                 this.c = SCORE_CATEGORIES.LARGE_STRAIGHT;
             }
-        if(c==null){
-            if (this.player.score.get(SCORE_CATEGORIES.ONES) == null) {
-                this.c = SCORE_CATEGORIES.ONES;
-            } else if (this.player.score.get(SCORE_CATEGORIES.TWOS) == null) {
-                this.c = SCORE_CATEGORIES.TWOS;
-            } else if (this.player.score.get(SCORE_CATEGORIES.THREES) == null) {
-                this.c = SCORE_CATEGORIES.THREES;
-            } else if (this.player.score.get(SCORE_CATEGORIES.FOURS) == null) {
-                this.c = SCORE_CATEGORIES.FOURS;
-            } else if (this.player.score.get(SCORE_CATEGORIES.FIVES) == null) {
-                this.c = SCORE_CATEGORIES.FIVES;
-            } else if (this.player.score.get(SCORE_CATEGORIES.SIXES) == null) {
-                this.c = SCORE_CATEGORIES.SIXES;
-            } else if (this.player.score.get(SCORE_CATEGORIES.THREE_OF_A_KIND) == null) {
-                this.c = SCORE_CATEGORIES.THREE_OF_A_KIND;
-            } else if (this.player.score.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) == null) {
-                this.c = SCORE_CATEGORIES.FOUR_OF_A_KIND;
-            } else if (this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
-                this.c = SCORE_CATEGORIES.FULL_HOUSE;
-            }
-            else if (this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
-                this.c = SCORE_CATEGORIES.SMALL_STRAIGHT;
-            } else if (this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
-                this.c = SCORE_CATEGORIES.LARGE_STRAIGHT;
-            } else if (this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
-                this.c = SCORE_CATEGORIES.YAHTZEE;
-            } else if (this.player.score.get(SCORE_CATEGORIES.CHANCE) == null) {
-                this.c = SCORE_CATEGORIES.CHANCE;
+            if (c == null) {
+                if (this.player.score.get(SCORE_CATEGORIES.ONES) == null) {
+                    this.c = SCORE_CATEGORIES.ONES;
+                } else if (this.player.score.get(SCORE_CATEGORIES.TWOS) == null) {
+                    this.c = SCORE_CATEGORIES.TWOS;
+                } else if (this.player.score.get(SCORE_CATEGORIES.THREES) == null) {
+                    this.c = SCORE_CATEGORIES.THREES;
+                } else if (this.player.score.get(SCORE_CATEGORIES.FOURS) == null) {
+                    this.c = SCORE_CATEGORIES.FOURS;
+                } else if (this.player.score.get(SCORE_CATEGORIES.FIVES) == null) {
+                    this.c = SCORE_CATEGORIES.FIVES;
+                } else if (this.player.score.get(SCORE_CATEGORIES.SIXES) == null) {
+                    this.c = SCORE_CATEGORIES.SIXES;
+                } else if (this.player.score.get(SCORE_CATEGORIES.THREE_OF_A_KIND) == null) {
+                    this.c = SCORE_CATEGORIES.THREE_OF_A_KIND;
+                } else if (this.player.score.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) == null) {
+                    this.c = SCORE_CATEGORIES.FOUR_OF_A_KIND;
+                } else if (this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
+                    this.c = SCORE_CATEGORIES.FULL_HOUSE;
+                } else if (this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
+                    this.c = SCORE_CATEGORIES.SMALL_STRAIGHT;
+                } else if (this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
+                    this.c = SCORE_CATEGORIES.LARGE_STRAIGHT;
+                } else if (this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
+                    this.c = SCORE_CATEGORIES.YAHTZEE;
+                } else if (this.player.score.get(SCORE_CATEGORIES.CHANCE) == null) {
+                    this.c = SCORE_CATEGORIES.CHANCE;
+                }
             }
         }
-    }
         this.player.addScore(this.c, scoringMetric(this.c));
         System.out.println("\n" + this.c + "\n");
     }
