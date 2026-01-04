@@ -1,9 +1,5 @@
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.HashMap;
-=======
->>>>>>> af710da7c1ff37077c59ee0e9aafd123f1e57b00
-
 public class AI extends Yacht {
     private int rollResults[];
     private SCORE_CATEGORIES c;
