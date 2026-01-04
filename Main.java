@@ -1,15 +1,20 @@
 public class Main {
     public static void main(String args[]) {
-        double avg =0;
-        for(int i = 0; i <1000; i++){
+        Yacht player = new Yacht();
         AI ai = new AI();
+       // player.play();
         ai.play();
-        
+       // System.out.println("\nYou: ");
+       // player.printScoreTotal();
         System.out.println("Computer: ");
         ai.printScoreTotal();
-        avg += ai.getTotalScore();
-        }
-        System.out.println("Computer Avg: "+ avg/1000);
+       // if (ai.getTotalScore() > player.getTotalScore()) {
+         //   System.out.println("You Lose!\nBetter luck next time...");
+        //} else if (ai.getTotalScore() < player.getTotalScore()) {
+         //   System.out.println("You Win!\n");
+        //} else {
+         //   System.out.println("A Tie!\nEveryone wins!");
+        //}
 
     }
 }
