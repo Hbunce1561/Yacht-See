@@ -40,11 +40,14 @@ public class Yacht {
             }
         }
     }
-    public void printScoreTotal(){
-        System.out.println("----Pre-Bonus Totals:----\n"+ this.player.getTotal() +"\n----Bonuses----\n"+this.player.getBonuses()+"\n----Final score----\n"+this.player.getBonusTotal());
+
+    public void printScoreTotal() {
+        System.out.println("----Pre-Bonus Totals:----\n" + this.player.getTotal() + "\n----Bonuses----\n"
+                + this.player.getBonuses() + "\n----Final score----\n" + this.player.getBonusTotal());
 
     }
-    public int getTotalScore(){
+
+    public int getTotalScore() {
         return this.player.getBonusTotal();
     }
 
@@ -93,6 +96,7 @@ public class Yacht {
         System.out.println();
         System.out.println(border);
     }
+
     public void keepDice() {
         boolean inputCheck = false;
         while (!inputCheck) {
@@ -195,27 +199,21 @@ public class Yacht {
                     break;
             }
         }
+        this.player.bonusYCheck(rollResults);
         switch (categories) {
             case ONES:
-                this.player.bonusYCheck(rollResults);
                 return rollResults[0];
             case TWOS:
-                this.player.bonusYCheck(rollResults);
                 return rollResults[1] * 2;
             case THREES:
-                this.player.bonusYCheck(rollResults);
                 return rollResults[2] * 3;
             case FOURS:
-                this.player.bonusYCheck(rollResults);
                 return rollResults[3] * 4;
             case FIVES:
-                this.player.bonusYCheck(rollResults);
                 return rollResults[4] * 5;
             case SIXES:
-                this.player.bonusYCheck(rollResults);
                 return rollResults[5] * 6;
             case THREE_OF_A_KIND:
-                this.player.bonusYCheck(rollResults);
                 for (int i = 0; i < rollResults.length; i++) {
                     if (rollResults[i] >= 3) {
                         int toak = 0;
@@ -227,7 +225,6 @@ public class Yacht {
                 }
                 return 0;
             case FOUR_OF_A_KIND:
-                this.player.bonusYCheck(rollResults);
                 for (int i = 0; i < rollResults.length; i++) {
                     if (rollResults[i] >= 4) {
                         int foak = 0;
@@ -239,7 +236,6 @@ public class Yacht {
                 }
                 return 0;
             case FULL_HOUSE:
-                this.player.bonusYCheck(rollResults);
                 boolean pair = false;
                 boolean trips = false;
                 for (int i = 0; i < rollResults.length; i++) {
@@ -255,7 +251,6 @@ public class Yacht {
                 }
                 return 0;
             case SMALL_STRAIGHT:
-                this.player.bonusYCheck(rollResults);
                 for (int i = 0; i < 3; i++) {
                     if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
                             && rollResults[i + 3] >= 1) {
@@ -264,7 +259,6 @@ public class Yacht {
                 }
                 return 0;
             case LARGE_STRAIGHT:
-                this.player.bonusYCheck(rollResults);
                 for (int i = 0; i < 2; i++) {
                     if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
                             && rollResults[i + 3] >= 1 && rollResults[i + 4] >= 1) {
