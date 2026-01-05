@@ -1,20 +1,20 @@
 public class Main {
     public static void main(String args[]) {
-        //Yacht player = new Yacht();
+        Yacht player = new Yacht();
         AI ai = new AI();
-       // player.play();
+        player.play();
         ai.play();
-       // System.out.println("\nYou: ");
-        //player.printScoreTotal();
+        System.out.println("\nYou: ");
+        player.printScoreTotal();
         System.out.println("Computer: ");
         ai.printScoreTotal();
-       // if (ai.getTotalScore() > player.getTotalScore()) {
-        //    System.out.println("You Lose!\nBetter luck next time...");
-        //} else if (ai.getTotalScore() < player.getTotalScore()) {
-         //   System.out.println("You Win!\n");
-        //} else {
-         //   System.out.println("A Tie!\nEveryone wins!");
-        //}
+        if (ai.getTotalScore() > player.getTotalScore()) {
+            System.out.println("You Lose!\nBetter luck next time...");
+        } else if (ai.getTotalScore() < player.getTotalScore()) {
+            System.out.println("You Win!\n");
+        } else {
+            System.out.println("A Tie!\nEveryone wins!");
+        }
 
     }
 }
