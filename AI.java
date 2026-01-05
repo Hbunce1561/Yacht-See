@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+
 public class AI extends Yacht {
     private int rollResults[];
     private SCORE_CATEGORIES c;
@@ -11,29 +12,27 @@ public class AI extends Yacht {
         this.c = null;
         this.checkCategory = new HashMap<>();
         loadChecks();
-        
-    }
-    private void loadChecks(){
-        for (SCORE_CATEGORIES sc : SCORE_CATEGORIES.values()){
-            this.checkCategory.put(sc, false);
-        }
-        this.tinyStraight=false;
 
     }
-    private void printChecks(){
-        for (SCORE_CATEGORIES sc : SCORE_CATEGORIES.values()){
-            System.out.println(sc +" : "+this.checkCategory.get(sc));
+
+    private void loadChecks() {
+        for (SCORE_CATEGORIES sc : SCORE_CATEGORIES.values()) {
+            this.checkCategory.put(sc, false);
         }
+        this.tinyStraight = false;
+
     }
-    private void checkChecks(){
-        this.checkCategory.put(SCORE_CATEGORIES.LARGE_STRAIGHT,StraightCheck(5));
-        this.checkCategory.put(SCORE_CATEGORIES.SMALL_STRAIGHT,StraightCheck(4));
-        this.tinyStraight=StraightCheck(2);
+
+    private void checkChecks() {
+        this.checkCategory.put(SCORE_CATEGORIES.LARGE_STRAIGHT, StraightCheck(5));
+        this.checkCategory.put(SCORE_CATEGORIES.SMALL_STRAIGHT, StraightCheck(4));
+        this.tinyStraight = StraightCheck(2);
         yachtCheck();
         fhCheck();
         TOAKCheck();
         FOAKCheck();
     }
+
     @Override
     public void play() {
         while (true) {
@@ -69,7 +68,7 @@ public class AI extends Yacht {
     @Override
     public void roll() {
         rollResults = new int[] { 0, 0, 0, 0, 0, 0 };
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < this.dice.size(); i++) {
             if (this.dice.get(i).getKeep() == false) {
                 this.dice.get(i).rollFace();
             }
@@ -123,10 +122,12 @@ public class AI extends Yacht {
                     || tinyStraight && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
                 selectKeeps(tinyRunCheck());
             }
-        } else if (this.checkCategory.get(SCORE_CATEGORIES.FULL_HOUSE) && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
+        } else if (this.checkCategory.get(SCORE_CATEGORIES.FULL_HOUSE)
+                && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
             setAllKeeps();
             this.c = SCORE_CATEGORIES.FULL_HOUSE;
-        } else if (this.checkCategory.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) || this.checkCategory.get(SCORE_CATEGORIES.THREE_OF_A_KIND)) {
+        } else if (this.checkCategory.get(SCORE_CATEGORIES.FOUR_OF_A_KIND)
+                || this.checkCategory.get(SCORE_CATEGORIES.THREE_OF_A_KIND)) {
             if (this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
                 selectKeeps(multCheck());
             } else {
@@ -139,15 +140,13 @@ public class AI extends Yacht {
         }
     }
 
-
     private void selectKeeps(ArrayList<Integer> d) {
         if (d != null) {
             for (int i = 0; i < d.size(); i++) {
                 for (int j = 0; j < this.dice.size(); j++) {
                     if (this.dice.get(j).getFace() == d.get(i)) {
                         this.dice.get(j).setKeep(true);
-                    }
-                    else{
+                    } else {
                         this.dice.get(j).setKeep(false);
                     }
                 }
@@ -180,7 +179,7 @@ public class AI extends Yacht {
             }
         }
         ArrayList<Integer> d = new ArrayList<>();
-        d.add(indexOf+1);
+        d.add(indexOf + 1);
         return d;
 
     }
@@ -213,7 +212,7 @@ public class AI extends Yacht {
     }
 
     private void setAllKeeps() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < this.dice.size(); i++) {
             this.dice.get(i).setKeep(true);
         }
         this.remainingRolls = 0;
@@ -251,30 +250,31 @@ public class AI extends Yacht {
     private void FOAKCheck() {
         for (int i = 0; i < rollResults.length; i++) {
             if (rollResults[i] >= 4) {
-               this.checkCategory.put(SCORE_CATEGORIES.FOUR_OF_A_KIND, true);
-               return;
+                this.checkCategory.put(SCORE_CATEGORIES.FOUR_OF_A_KIND, true);
+                return;
             }
         }
         this.checkCategory.put(SCORE_CATEGORIES.FOUR_OF_A_KIND, false);
     }
 
     private boolean StraightCheck(int length) {
-        int count =0;
+        int count = 0;
         for (int i = 0; i < rollResults.length; i++) {
-                if (rollResults[i] >= 1) {
+            if (rollResults[i] >= 1) {
                 count++;
-                if (count >= length) return true;
-                } else {
-            count = 0;
-        }
+                if (count >= length)
+                    return true;
+            } else {
+                count = 0;
             }
-            return false;
-        
+        }
+        return false;
+
     }
 
     private void yachtCheck() {
         for (int count : rollResults) {
-            if (count == 5) {
+            if (count == this.dice.size()) {
                 this.checkCategory.put(SCORE_CATEGORIES.YAHTZEE, true);
                 return;
             }
@@ -285,13 +285,17 @@ public class AI extends Yacht {
     @Override
     public void scoreStart() {
         if (c == null) {
-            if (this.checkCategory.get(SCORE_CATEGORIES.YAHTZEE) && this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
+            if (this.checkCategory.get(SCORE_CATEGORIES.YAHTZEE)
+                    && this.player.score.get(SCORE_CATEGORIES.YAHTZEE) == null) {
                 this.c = SCORE_CATEGORIES.YAHTZEE;
-            } else if (this.checkCategory.get(SCORE_CATEGORIES.FULL_HOUSE) && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
+            } else if (this.checkCategory.get(SCORE_CATEGORIES.FULL_HOUSE)
+                    && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
                 this.c = SCORE_CATEGORIES.FULL_HOUSE;
-            } else if (this.checkCategory.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) && this.player.score.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) == null) {
+            } else if (this.checkCategory.get(SCORE_CATEGORIES.FOUR_OF_A_KIND)
+                    && this.player.score.get(SCORE_CATEGORIES.FOUR_OF_A_KIND) == null) {
                 this.c = SCORE_CATEGORIES.FOUR_OF_A_KIND;
-            } else if (this.checkCategory.get(SCORE_CATEGORIES.THREE_OF_A_KIND) && this.player.score.get(SCORE_CATEGORIES.THREE_OF_A_KIND) == null) {
+            } else if (this.checkCategory.get(SCORE_CATEGORIES.THREE_OF_A_KIND)
+                    && this.player.score.get(SCORE_CATEGORIES.THREE_OF_A_KIND) == null) {
                 this.c = SCORE_CATEGORIES.THREE_OF_A_KIND;
             } else if (rollResults[5] > 2 && this.player.score.get(SCORE_CATEGORIES.SIXES) == null) {
                 this.c = SCORE_CATEGORIES.SIXES;
@@ -299,9 +303,11 @@ public class AI extends Yacht {
                 this.c = SCORE_CATEGORIES.FIVES;
             } else if (rollResults[3] > 3 && this.player.score.get(SCORE_CATEGORIES.FOURS) == null) {
                 this.c = SCORE_CATEGORIES.FOURS;
-            } else if (this.checkCategory.get(SCORE_CATEGORIES.SMALL_STRAIGHT) && this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
+            } else if (this.checkCategory.get(SCORE_CATEGORIES.SMALL_STRAIGHT)
+                    && this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
                 this.c = SCORE_CATEGORIES.SMALL_STRAIGHT;
-            } else if (this.checkCategory.get(SCORE_CATEGORIES.LARGE_STRAIGHT) && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
+            } else if (this.checkCategory.get(SCORE_CATEGORIES.LARGE_STRAIGHT)
+                    && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
                 this.c = SCORE_CATEGORIES.LARGE_STRAIGHT;
             }
             if (c == null) {
@@ -337,7 +343,6 @@ public class AI extends Yacht {
         this.player.addScore(this.c, scoringMetric(this.c));
         System.out.println("\n" + this.c + "\n");
     }
-    
 
     @Override
     public int scoringMetric(SCORE_CATEGORIES categories) {
@@ -387,10 +392,8 @@ public class AI extends Yacht {
                 }
                 return 0;
             case YAHTZEE:
-                for (int count : rollResults) {
-                    if (count == 5) {
-                        return 50;
-                    }
+                if (this.checkCategory.get(SCORE_CATEGORIES.YAHTZEE)) {
+                    return 50;
                 }
                 return 0;
             case CHANCE:
