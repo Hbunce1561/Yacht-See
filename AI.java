@@ -4,17 +4,21 @@ public class AI extends Yacht {
     private int rollResults[];
     private SCORE_CATEGORIES c;
     private HashMap<SCORE_CATEGORIES, Boolean> checkCategory;
+    private boolean tinyStraight;
 
     public AI() {
         super();
         this.c = null;
         this.checkCategory = new HashMap<>();
         loadChecks();
+        
     }
     private void loadChecks(){
         for (SCORE_CATEGORIES sc : SCORE_CATEGORIES.values()){
             this.checkCategory.put(sc, false);
         }
+        this.tinyStraight=false;
+
     }
     private void printChecks(){
         for (SCORE_CATEGORIES sc : SCORE_CATEGORIES.values()){
@@ -22,8 +26,9 @@ public class AI extends Yacht {
         }
     }
     private void checkChecks(){
-        lStraightCheck();
-        sStraightCheck();
+        this.checkCategory.put(SCORE_CATEGORIES.LARGE_STRAIGHT,StraightCheck(5));
+        this.checkCategory.put(SCORE_CATEGORIES.SMALL_STRAIGHT,StraightCheck(4));
+        this.tinyStraight=StraightCheck(2);
         yachtCheck();
         fhCheck();
         TOAKCheck();
@@ -114,8 +119,8 @@ public class AI extends Yacht {
             } else if (this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null) {
                 setAllKeeps();
                 this.c = SCORE_CATEGORIES.SMALL_STRAIGHT;
-            } else if (tinyStraightCheck() && this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null
-                    || tinyStraightCheck() && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
+            } else if (tinyStraight && this.player.score.get(SCORE_CATEGORIES.SMALL_STRAIGHT) == null
+                    || tinyStraight && this.player.score.get(SCORE_CATEGORIES.LARGE_STRAIGHT) == null) {
                 selectKeeps(tinyRunCheck());
             }
         } else if (this.checkCategory.get(SCORE_CATEGORIES.FULL_HOUSE) && this.player.score.get(SCORE_CATEGORIES.FULL_HOUSE) == null) {
@@ -192,13 +197,6 @@ public class AI extends Yacht {
 
     }
 
-    private boolean tinyStraightCheck() {
-        if (tinyRunCheck().size() >= 2) {
-            return true;
-        }
-        return false;
-    }
-
     private ArrayList<Integer> runCheck() {
         ArrayList<Integer> d = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -219,13 +217,6 @@ public class AI extends Yacht {
             this.dice.get(i).setKeep(true);
         }
         this.remainingRolls = 0;
-    }
-
-    private boolean yBonusCheck() {
-        if (this.player.score.get(SCORE_CATEGORIES.YAHTZEE) != null) {
-            return true;
-        }
-        return false;
     }
 
     private void fhCheck() {
@@ -267,26 +258,18 @@ public class AI extends Yacht {
         this.checkCategory.put(SCORE_CATEGORIES.FOUR_OF_A_KIND, false);
     }
 
-    private void sStraightCheck() {
-        for (int i = 0; i < 3; i++) {
-            if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
-                    && rollResults[i + 3] >= 1) {
-                this.checkCategory.put(SCORE_CATEGORIES.SMALL_STRAIGHT, true);
-                return;
-            }
+    private boolean StraightCheck(int length) {
+        int count =0;
+        for (int i = 0; i < rollResults.length; i++) {
+                if (rollResults[i] >= 1) {
+                count++;
+                if (count >= length) return true;
+                } else {
+            count = 0;
         }
-        this.checkCategory.put(SCORE_CATEGORIES.SMALL_STRAIGHT, false);
-    }
-
-    private void lStraightCheck() {
-        for (int i = 0; i < 2; i++) {
-            if (rollResults[i] >= 1 && rollResults[i + 1] >= 1 && rollResults[i + 2] >= 1
-                    && rollResults[i + 3] >= 1 && rollResults[i + 4] >= 1) {
-                this.checkCategory.put(SCORE_CATEGORIES.LARGE_STRAIGHT, true);
-                return;
             }
-        }
-        this.checkCategory.put(SCORE_CATEGORIES.LARGE_STRAIGHT, false);
+            return false;
+        
     }
 
     private void yachtCheck() {
